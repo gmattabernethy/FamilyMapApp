@@ -2,6 +2,8 @@ package com.example.matt.familymap;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +25,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private EditText emailView;
     private RadioGroup genderGroup;
     private RequestQueue queue;
+    private Button loginButton;
+    private Button registerButton;
 
     private LoginTask loginTask = null;
     private RegisterTask registerTask = null;
@@ -48,6 +52,41 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         lNameView = (EditText) v.findViewById(R.id.editLName);
         emailView = (EditText) v.findViewById(R.id.editEmail);
         genderGroup = (RadioGroup) v.findViewById(R.id.groupGender);
+        loginButton = (Button) v.findViewById(R.id.buttonLogin);
+        registerButton = (Button) v.findViewById(R.id.buttonRegister);
+
+        TextWatcher watcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(hostView.getText().length() == 0 || portView.getText().length() == 0 || usernameView.getText().length() == 0
+                        || passwordView.getText().length() == 0 || fNameView.getText().length() == 0 || lNameView.getText().length() == 0
+                        || emailView.getText().length() == 0){
+                    registerButton.setEnabled(false);
+                } else {
+                    registerButton.setEnabled(true);
+                }
+                if(hostView.getText().length() == 0 || portView.getText().length() == 0 ||
+                        usernameView.getText().length() == 0 || passwordView.getText().length() == 0){
+                    loginButton.setEnabled(false);
+                } else {
+                    loginButton.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        };
+
+        hostView.addTextChangedListener(watcher);
+        portView.addTextChangedListener(watcher);
+        usernameView.addTextChangedListener(watcher);
+        passwordView.addTextChangedListener(watcher);
+        fNameView.addTextChangedListener(watcher);
+        lNameView.addTextChangedListener(watcher);
+        emailView.addTextChangedListener(watcher);
 
         return v;
     }
