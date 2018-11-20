@@ -34,7 +34,8 @@
         android:layout_marginRight="0dp"
         android:ems="10"
         android:hint="Email"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:text="gmail" />
 
     <EditText
         android:id="@+id/editUserName"
@@ -53,7 +54,7 @@
         android:ems="10"
         android:hint="UserName"
         android:inputType="textPersonName"
-        android:text="UserName" />
+        android:text="username" />
 
     <EditText
         android:id="@+id/editPassword"
@@ -72,7 +73,7 @@
         android:ems="10"
         android:hint="Password"
         android:inputType="textPersonName"
-        android:text="Password" />
+        android:text="password" />
 
     <EditText
         android:id="@+id/editFName"
@@ -90,7 +91,8 @@
         android:layout_marginRight="0dp"
         android:ems="10"
         android:hint="First Name"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:text="Matt" />
 
     <EditText
         android:id="@+id/editLName"
@@ -108,7 +110,8 @@
         android:layout_marginRight="0dp"
         android:ems="10"
         android:hint="Last Name"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:text="Abernethy" />
 
     <EditText
         android:id="@+id/editPort"
@@ -130,6 +133,7 @@
         android:text="8500" />
 
     <RadioGroup
+        android:id="@+id/groupGender"
         android:layout_width="249dp"
         android:layout_height="28dp"
         android:layout_below="@+id/editEmail"
@@ -147,14 +151,15 @@
         android:orientation="horizontal">
 
         <RadioButton
-            android:id="@+id/radioButton2"
+            android:id="@+id/radioButtonMale"
             android:layout_width="82dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:checked="true"
             android:text="Male" />
 
         <RadioButton
-            android:id="@+id/radioButton3"
+            android:id="@+id/radioButtonFemale"
             android:layout_width="82dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
