@@ -20,9 +20,11 @@
         android:layout_marginBottom="8dp"
         android:visibility="gone" />
 
-    <fragment
-        android:id="@+id/fragmentLogin"
-        android:name="com.example.matt.familymap.LoginFragment"
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+    </FrameLayout>
+
 </LinearLayout>

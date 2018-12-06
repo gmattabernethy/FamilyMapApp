@@ -2,6 +2,8 @@ package com.example.matt.familymap;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -127,6 +129,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
         familyTask = new GetFamilyTask(authToken, server, getContext());
         familyTask.execute();
+
+        //TODO find real place for this
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        MapFragment mapFragment = new MapFragment();
+        transaction.replace(R.id.fragment_container, mapFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     @Override
