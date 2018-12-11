@@ -14,6 +14,17 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 
 import com.android.volley.RequestQueue;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import Task.GetFamilyEventsTask;
+import Task.GetFamilyTask;
+import Task.LoginTask;
+import Task.RegisterTask;
 
 
 public class LoginFragment extends Fragment implements View.OnClickListener {
@@ -32,7 +43,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     private LoginTask loginTask = null;
     private RegisterTask registerTask = null;
-    private GetFamilyTask familyTask = null;
+    private GetFamilyTask getFamilyTask = null;
+    private GetFamilyEventsTask getFamilyEventsTask = null;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -124,15 +137,24 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         registerTask.execute();
     }
 
-    public void getFamilyData(String authToken){
+    public void getFamilyPersons(String authToken){
         String server = hostView.getText().toString() +":"+ portView.getText().toString();
 
-        familyTask = new GetFamilyTask(authToken, server, getContext());
-        familyTask.execute();
+        getFamilyTask = new GetFamilyTask(authToken, server, getContext());
+        getFamilyTask.execute();
+    }
 
-        //TODO find real place for this
+    public void getFamilyEvents(String authToken){
+        String server = hostView.getText().toString() +":"+ portView.getText().toString();
+
+        getFamilyEventsTask = new GetFamilyEventsTask(authToken, server, getContext());
+        getFamilyEventsTask.execute();
+    }
+
+    public void login(){
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
+
         MapFragment mapFragment = new MapFragment();
         transaction.replace(R.id.fragment_container, mapFragment);
         transaction.addToBackStack(null);

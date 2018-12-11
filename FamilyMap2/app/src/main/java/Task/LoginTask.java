@@ -1,4 +1,4 @@
-package com.example.matt.familymap;
+package Task;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -22,7 +22,7 @@ public class LoginTask extends AsyncTask<Void, Void, Boolean> {
     private String server;
     private Context context;
 
-    LoginTask(String userName, String password, String server, Context context, LoginFragment fragment) {
+    public LoginTask(String userName, String password, String server, Context context, LoginFragment fragment) {
         this.fragment = fragment;
         this.userName = userName;
         this.password = password;
@@ -50,11 +50,13 @@ public class LoginTask extends AsyncTask<Void, Void, Boolean> {
                         //Toast.makeText(context,response.toString(), Toast.LENGTH_LONG).show();
                         try {
                             String authToken = response.get("token").toString();
-                            fragment.getFamilyData(authToken);
+                            fragment.getFamilyPersons(authToken);
+                            fragment.getFamilyEvents(authToken);
+                            fragment.login();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        System.out.println("Response: " + response.toString());
+                        //System.out.println("Response: " + response.toString());
                     }
                 }, new Response.ErrorListener() {
 

@@ -1,4 +1,4 @@
-package com.example.matt.familymap;
+package Task;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -10,6 +10,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.matt.familymap.API;
+import com.example.matt.familymap.Data;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,11 +26,13 @@ public class GetFamilyTask extends AsyncTask<Void, Void, Boolean> {
     private String authToken;
     private String server;
     private Context context;
+    private Data data;
 
-    GetFamilyTask(String authToken, String server, Context context) {
+    public GetFamilyTask(String authToken, String server, Context context) {
         this.authToken = authToken;
         this.server = server;
         this.context = context;
+        data = Data.buildData();
     }
 
     @Override
@@ -41,16 +46,12 @@ public class GetFamilyTask extends AsyncTask<Void, Void, Boolean> {
                 (Request.Method.GET, url, request, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        String fullName = null;
                         try {
                             JSONArray jArray = (JSONArray) response.get("data");
-                            JSONObject jObject = (JSONObject) jArray.get(0);
-                            fullName = jObject.get("firstName") + " " + jObject.get("lastName");
+                            data.personsFromJson(jArray.toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        Toast.makeText(context,fullName, Toast.LENGTH_LONG).show();
-                        System.out.println("Response: " + response.toString());
                     }
                 }, new Response.ErrorListener() {
 

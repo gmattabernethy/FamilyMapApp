@@ -1,78 +1,59 @@
-package com.example.matt.familymap;
+package Task;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.webkit.HttpAuthHandler;
 import android.widget.Toast;
-import com.android.volley.DefaultRetryPolicy;
+
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.matt.familymap.API;
-import com.example.matt.familymap.LoginFragment;
+import com.example.matt.familymap.Data;
 
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
-public class RegisterTask extends AsyncTask<Void, Void, Boolean> {
-    private LoginFragment fragment;
+public class GetFamilyEventsTask extends AsyncTask<Void, Void, Boolean> {
 
-    private final String userName;
-    private final String password;
-    private String fName;
-    private String lName;
-    private String email;
-    private String gender;
+    private String authToken;
     private String server;
     private Context context;
+    private Data data;
 
-    public RegisterTask(String userName, String password, String fName, String lName, String email, String gender, String server, Context context, LoginFragment fragment) {
-        this.fragment = fragment;
-        this.userName = userName;
-        this.password = password;
-        this.fName = fName;
-        this.lName = lName;
-        this.email = email;
-        this.gender = gender;
+    public GetFamilyEventsTask(String authToken, String server, Context context) {
+        this.authToken = authToken;
         this.server = server;
         this.context = context;
+        data = Data.buildData();
     }
 
     @Override
     protected Boolean doInBackground(Void... params) {
 
-        String url = "http://"+server+"/user/register";
+        String url = "http://"+server+"/event";
 
         JSONObject request = new JSONObject();
-        try {
-            request.put("userName", userName);
-            request.put("password", password);
-            request.put("email", email);
-            request.put("firstName", fName);
-            request.put("lastName", lName);
-            request.put("gender", gender);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.POST, url, request, new Response.Listener<JSONObject>() {
+                (Request.Method.GET, url, request, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        //Toast.makeText(context,response.toString(), Toast.LENGTH_LONG).show();
                         try {
-                            String authToken = response.get("token").toString();
-                            fragment.getFamilyData(authToken);
+                            JSONArray jArray = (JSONArray) response.get("data");
+                            data.eventsFromJson(jArray.toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        System.out.println("Response: " + response.toString());
                     }
                 }, new Response.ErrorListener() {
+
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         try {
@@ -86,11 +67,23 @@ public class RegisterTask extends AsyncTask<Void, Void, Boolean> {
 
                         }
                     }
-                });
+                }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                //headers.put("Content-Type", "application/json");
+                headers.put("Authorization", authToken);
+                return headers;
+            }
+        };
 
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(0,1,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        try {
+            jsonObjectRequest.getHeaders();
+        } catch (AuthFailureError authFailureError) {
+            authFailureError.printStackTrace();
+        }
         API.getInstance(context).addToRequestQueue(jsonObjectRequest);
         return true;
     }
-}
 
+}
