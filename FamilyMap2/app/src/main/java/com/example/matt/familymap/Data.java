@@ -47,7 +47,7 @@ public class Data {
         }
     }
 
-    public Person getPerson(String personID){
+    public Person getPersonByID(String personID){
         for (Person p: persons) {
             if(p.getPersonID().equals(personID)) return p;
         }
