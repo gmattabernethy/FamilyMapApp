@@ -7,7 +7,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import model.*;
 
@@ -28,6 +30,7 @@ public class Data {
     }
 
     public void personsFromJson(String json){
+        persons = new ArrayList<>();
         JsonArray jArray = gson.fromJson(json, JsonArray.class);
 
         for (int i = 0; i < jArray.size(); i++){
@@ -38,6 +41,7 @@ public class Data {
     }
 
     public void eventsFromJson(String json){
+        events = new ArrayList<>();
         JsonArray jArray = gson.fromJson(json, JsonArray.class);
 
         for (int i = 0; i < jArray.size(); i++){
@@ -52,6 +56,51 @@ public class Data {
             if(p.getPersonID().equals(personID)) return p;
         }
         return null;
+    }
+
+    public List<Event> getEventByPerson(String personID){
+        List<Event> personEvents = new ArrayList<>();
+
+        for (Event e: events) {
+            if(e.getPersonID().equals(personID)) personEvents.add(e);
+        }
+        return personEvents;
+    }
+
+    public Map getFamily(String personID){
+        Person person = getPersonByID(personID);
+        List<Person> children = new ArrayList<>();
+        List<Person> father = new ArrayList<>();
+        List<Person> mother  = new ArrayList<>();
+        List<Person> spouse  = new ArrayList<>();
+        Map family = new HashMap();
+
+        for (Person p: persons){
+            if(p.getFather() != null){
+                if(p.getFather().equals(personID)) children.add(p);
+            }
+            if(p.getMother() != null){
+                if(p.getMother().equals(personID)){
+                    children.add(p);
+                }
+            }
+            if(person.getFather() != null) {
+                if (p.getPersonID().equals(person.getFather())) father.add(p);
+            }
+            if(person.getMother() != null) {
+                if(p.getPersonID().equals(person.getMother())) mother.add(p);
+            }
+            if(person.getSpouse() != null){
+                if(p.getPersonID().equals(person.getSpouse())) spouse.add(p);
+            }
+        }
+
+        family.put("children", children);
+        family.put("father", father);
+        family.put("mother", mother);
+        family.put("spouse", spouse);
+
+        return family;
     }
 
     public List<Person> getPersons() {

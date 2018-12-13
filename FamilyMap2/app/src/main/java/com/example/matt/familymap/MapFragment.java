@@ -1,5 +1,6 @@
 package com.example.matt.familymap;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -22,16 +23,25 @@ import java.util.List;
 import model.Event;
 import model.Person;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener,View.OnClickListener {
     private GoogleMap gMap;
     private TextView text;
     private Data data = Data.buildData();
+    private String currentPerson;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.map_view, container, false);
 
         text = v.findViewById(R.id.textDescription);
+
+        text.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), PersonActivity.class);
+                intent.putExtra("personID", currentPerson);
+                startActivity(intent);
+            }
+        });
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -78,7 +88,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     @Override
     public boolean onMarkerClick(Marker marker) {
         Event event = (Event) marker.getTag();
-        Person person = data.getPersonByID(event.getPersonID());
+        currentPerson = event.getPersonID();
+        Person person = data.getPersonByID(currentPerson);
 
         LatLng position = new LatLng(event.getLatitude(),event.getLongitude());
         gMap.moveCamera(CameraUpdateFactory.newLatLng(position));
@@ -92,5 +103,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
         text.setText(description);
         return true;
+    }
+
+    public void onClick(View v) {
+        Intent intent = new Intent(getContext(), PersonActivity.class);
+        intent.putExtra("personID", currentPerson);
+        startActivity(intent);
     }
 }
