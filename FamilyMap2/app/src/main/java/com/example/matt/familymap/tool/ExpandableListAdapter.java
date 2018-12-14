@@ -1,9 +1,10 @@
-package com.example.matt.familymap;
+package com.example.matt.familymap.tool;
 
 import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,12 +12,16 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
-public class ExpandableListAdapter extends BaseExpandableListAdapter {
+import com.example.matt.familymap.PersonActivity;
+import com.example.matt.familymap.R;
+
+public class ExpandableListAdapter extends BaseExpandableListAdapter implements View.OnClickListener {
 
     private Context _context;
     private List<String> _listDataHeader; // header titles
     // child data in format of header title, child title
     private HashMap<String, List<String>> _listDataChild;
+    private PersonActivity personActivity = new PersonActivity();
 
     public ExpandableListAdapter(Context context, List<String> listDataHeader,
                                  HashMap<String, List<String>> listChildData) {
@@ -38,7 +43,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, final int childPosition,
-                             boolean isLastChild, View convertView, ViewGroup parent) {
+                             boolean isLastChild, View convertView, final ViewGroup parent) {
 
         final String childText = (String) getChild(groupPosition, childPosition);
 
@@ -52,6 +57,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 .findViewById(R.id.lblListItem);
 
         txtListChild.setText(childText);
+        /*txtListChild.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                TextView text = (TextView) v;
+                personActivity.openActivity(text.getText().toString(), childPosition);
+            }
+        });*/
         return convertView;
     }
 
@@ -102,5 +113,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 }

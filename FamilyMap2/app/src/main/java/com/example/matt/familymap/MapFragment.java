@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.matt.familymap.tool.Data;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -18,7 +19,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import model.Event;
 import model.Person;
@@ -28,11 +31,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private TextView text;
     private Data data = Data.buildData();
     private String currentPerson;
+    private String eventID;
+    private static MapFragment mapFragment;
+    private List<Marker> markers;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.map_view, container, false);
-
+        markers = new ArrayList<>();
+        mapFragment = this;
         text = v.findViewById(R.id.textDescription);
 
         text.setOnClickListener(new View.OnClickListener() {
@@ -49,17 +56,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         return v;
     }
 
-
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        if(getActivity() instanceof EventActivity){
+            eventID =  ((EventActivity) getActivity()).getEventID();
+        }
+        else eventID = null;
+
         gMap = googleMap;
         gMap.getUiSettings().setZoomControlsEnabled(true);
         gMap.setOnMarkerClickListener(this);
         populateMap();
     }
 
-    private void populateMap(){
+    public void populateMap(){
+        for(Marker m: markers) m.remove();
+
         List<Event> events = data.getEvents();
 
         for(int i = 0; i < events.size(); i++){
@@ -77,16 +89,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
             Marker marker = gMap.addMarker(new MarkerOptions().position(position).icon(icon).title(eventType + " of " + name));
             marker.setTag(e);
+            markers.add(marker);
 
-            if(i == 0) {
-                onMarkerClick(marker);
-                marker.showInfoWindow();
+            if(eventID != null){
+                if(e.getEventID().equals(eventID)){
+                    onMarkerClick(marker);
+                }
             }
         }
     }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+        //marker.showInfoWindow();
         Event event = (Event) marker.getTag();
         currentPerson = event.getPersonID();
         Person person = data.getPersonByID(currentPerson);
@@ -106,8 +121,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     public void onClick(View v) {
-        Intent intent = new Intent(getContext(), PersonActivity.class);
-        intent.putExtra("personID", currentPerson);
-        startActivity(intent);
+
+    }
+
+    public static MapFragment getMapFragment(){
+        return mapFragment;
     }
 }

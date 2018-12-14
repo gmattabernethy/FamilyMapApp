@@ -1,19 +1,18 @@
 package com.example.matt.familymap;
 
-import android.app.LoaderManager;
-import android.content.Loader;
-import android.database.Cursor;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
+import com.example.matt.familymap.tool.Data;
+import com.example.matt.familymap.tool.ExpandableListAdapter;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -35,14 +34,26 @@ public class PersonActivity extends AppCompatActivity {
     private Person person;
     private Data data;
 
+    private List<String> personIDs;
+    private List<String> eventIDs;
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_person);
+
+        android.support.v7.widget.Toolbar myToolbar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         data = Data.buildData();
 
         String personID = getIntent().getStringExtra("personID");
+
+        personIDs = new ArrayList<>();
+        eventIDs = new ArrayList<>();
 
         person = data.getPersonByID(personID);
         fName = findViewById(R.id.person_fname);
@@ -54,7 +65,27 @@ public class PersonActivity extends AppCompatActivity {
         listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
         expListView.setAdapter(listAdapter);
 
+        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                //System.out.println("Group: " + groupPosition + " child: " + childPosition);
+                if(groupPosition == 1){
+                    Intent intent = new Intent(getApplicationContext(), PersonActivity.class);
+                    intent.putExtra("personID", personIDs.get(childPosition));
+                    startActivity(intent);
+                }
+                else if(groupPosition == 0){
+                    Intent intent = new Intent(getApplicationContext(), EventActivity.class);
+                    intent.putExtra("eventID", eventIDs.get(childPosition));
+                    startActivity(intent);
+                }
+                return false;
+            }
+        });
+
         fillText();
+
+
     }
 
     private void fillText(){
@@ -111,6 +142,7 @@ public class PersonActivity extends AppCompatActivity {
         sortEvents(events);
 
         for(Event e: events){
+            eventIDs.add(e.getEventID());
             String description = e.getEventType() + ": " + e.getCity() + ", " + e.getCountry() + " (" + e.getYear() + ")";
             lifeEvents.add(description);
         }
@@ -125,24 +157,28 @@ public class PersonActivity extends AppCompatActivity {
         List<Person> persons = (ArrayList)familyMembers.get("father");
         if(persons.size() > 0) {
             Person father = persons.get(0);
+            personIDs.add(father.getPersonID());
             family.add(father.getFirstName() + " " + father.getLastName() + "\n" + "Father");
         }
 
         persons = (ArrayList)familyMembers.get("mother");
         if(persons.size() > 0){
             Person mother = persons.get(0);
+            personIDs.add(mother.getPersonID());
             family.add(mother.getFirstName() + " " + mother.getLastName() + "\n" + "Mother");
         }
 
         persons = (ArrayList)familyMembers.get("spouse");
         if(persons.size() > 0) {
             Person spouse = persons.get(0);
+            personIDs.add(spouse.getPersonID());
             family.add(spouse.getFirstName() + " " + spouse.getLastName() + "\n" + "Spouse");
         }
 
         List<Person> children = (ArrayList)familyMembers.get("children");
 
         for(Person p: children){
+            personIDs.add(p.getPersonID());
             family.add(p.getFirstName() + " " + p.getLastName() + "\n" + "Child");
         }
 

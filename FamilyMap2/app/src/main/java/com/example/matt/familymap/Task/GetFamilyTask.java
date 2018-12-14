@@ -1,4 +1,4 @@
-package Task;
+package com.example.matt.familymap.Task;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -9,9 +9,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.matt.familymap.API;
-import com.example.matt.familymap.Data;
-
+import com.example.matt.familymap.tool.API;
+import com.example.matt.familymap.tool.Data;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,14 +19,14 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GetFamilyEventsTask extends AsyncTask<Void, Void, Boolean> {
+public class GetFamilyTask extends AsyncTask<Void, Void, Boolean> {
 
     private String authToken;
     private String server;
     private Context context;
     private Data data;
 
-    public GetFamilyEventsTask(String authToken, String server, Context context) {
+    public GetFamilyTask(String authToken, String server, Context context) {
         this.authToken = authToken;
         this.server = server;
         this.context = context;
@@ -36,8 +35,10 @@ public class GetFamilyEventsTask extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... params) {
+        String url = "http://"+server+"/person";
 
-        String url = "http://"+server+"/event";
+        data = Data.buildData();
+        data.setServer(server);
 
         JSONObject request = new JSONObject();
 
@@ -47,7 +48,7 @@ public class GetFamilyEventsTask extends AsyncTask<Void, Void, Boolean> {
                     public void onResponse(JSONObject response) {
                         try {
                             JSONArray jArray = (JSONArray) response.get("data");
-                            data.eventsFromJson(jArray.toString());
+                            data.personsFromJson(jArray.toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -68,14 +69,14 @@ public class GetFamilyEventsTask extends AsyncTask<Void, Void, Boolean> {
                         }
                     }
                 }){
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                //headers.put("Content-Type", "application/json");
-                headers.put("Authorization", authToken);
-                return headers;
-            }
-        };
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        HashMap<String, String> headers = new HashMap<String, String>();
+                        //headers.put("Content-Type", "application/json");
+                        headers.put("Authorization", authToken);
+                        return headers;
+                    }
+            };
 
         try {
             jsonObjectRequest.getHeaders();
@@ -85,5 +86,6 @@ public class GetFamilyEventsTask extends AsyncTask<Void, Void, Boolean> {
         API.getInstance(context).addToRequestQueue(jsonObjectRequest);
         return true;
     }
+
 
 }

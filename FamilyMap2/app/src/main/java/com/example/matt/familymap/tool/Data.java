@@ -1,8 +1,5 @@
-package com.example.matt.familymap;
+package com.example.matt.familymap.tool;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -17,7 +14,9 @@ public class Data {
     static private Data data;
     private List<Person> persons;
     private List<Event> events;
-    Gson gson = new Gson();
+    private String authToken;
+    private String server;
+    private Gson gson = new Gson();
 
     private Data(){
         persons = new ArrayList<>();
@@ -54,6 +53,13 @@ public class Data {
     public Person getPersonByID(String personID){
         for (Person p: persons) {
             if(p.getPersonID().equals(personID)) return p;
+        }
+        return null;
+    }
+
+    public Event getEventByID(String eventID){
+        for (Event e: events) {
+            if(e.getEventID().equals(eventID)) return e;
         }
         return null;
     }
@@ -101,6 +107,22 @@ public class Data {
         family.put("spouse", spouse);
 
         return family;
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public void setServer(String server) {
+        this.server = server;
+    }
+
+    public String getServer() {
+        return server;
     }
 
     public List<Person> getPersons() {

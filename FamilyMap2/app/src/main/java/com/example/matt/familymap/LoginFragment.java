@@ -2,8 +2,6 @@ package com.example.matt.familymap;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -14,17 +12,11 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 
 import com.android.volley.RequestQueue;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
-import Task.GetFamilyEventsTask;
-import Task.GetFamilyTask;
-import Task.LoginTask;
-import Task.RegisterTask;
+import com.example.matt.familymap.Task.GetFamilyEventsTask;
+import com.example.matt.familymap.Task.GetFamilyTask;
+import com.example.matt.familymap.Task.LoginTask;
+import com.example.matt.familymap.Task.RegisterTask;
 
 
 public class LoginFragment extends Fragment implements View.OnClickListener {
@@ -152,13 +144,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     }
 
     public void login(){
-        FragmentManager manager = getFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-
-        MapFragment mapFragment = new MapFragment();
-        transaction.replace(R.id.fragment_container, mapFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        MainActivity activity = (MainActivity) getActivity();
+        activity.openMap();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.example.matt.familymap;
+package com.example.matt.familymap.tool;
 
 import android.content.Context;
 

@@ -1,7 +1,9 @@
-package Task;
+package com.example.matt.familymap.Task;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -9,10 +11,12 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.matt.familymap.API;
-import com.example.matt.familymap.Data;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.example.matt.familymap.MapFragment;
+import com.example.matt.familymap.R;
+import com.example.matt.familymap.SettingsActivity;
+import com.example.matt.familymap.tool.API;
+import com.example.matt.familymap.tool.Data;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,14 +25,14 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GetFamilyTask extends AsyncTask<Void, Void, Boolean> {
+public class GetFamilyEventsTask extends AsyncTask<Void, Void, Boolean> {
 
     private String authToken;
     private String server;
     private Context context;
     private Data data;
 
-    public GetFamilyTask(String authToken, String server, Context context) {
+    public GetFamilyEventsTask(String authToken, String server, Context context) {
         this.authToken = authToken;
         this.server = server;
         this.context = context;
@@ -36,9 +40,20 @@ public class GetFamilyTask extends AsyncTask<Void, Void, Boolean> {
     }
 
     @Override
-    protected Boolean doInBackground(Void... params) {
+    protected void onPostExecute(Boolean aBoolean) {
+        if(SettingsActivity.getActivity() != null){
+            SettingsActivity.getActivity().drawMap();
+            System.out.println("HERE!!");
+        }
+        super.onPostExecute(aBoolean);
+    }
 
-        String url = "http://"+server+"/person";
+    @Override
+    protected Boolean doInBackground(Void... params) {
+        String url = "http://"+server+"/event";
+
+        data = Data.buildData();
+        data.setServer(server);
 
         JSONObject request = new JSONObject();
 
@@ -48,7 +63,7 @@ public class GetFamilyTask extends AsyncTask<Void, Void, Boolean> {
                     public void onResponse(JSONObject response) {
                         try {
                             JSONArray jArray = (JSONArray) response.get("data");
-                            data.personsFromJson(jArray.toString());
+                            data.eventsFromJson(jArray.toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -69,14 +84,14 @@ public class GetFamilyTask extends AsyncTask<Void, Void, Boolean> {
                         }
                     }
                 }){
-                    @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        HashMap<String, String> headers = new HashMap<String, String>();
-                        //headers.put("Content-Type", "application/json");
-                        headers.put("Authorization", authToken);
-                        return headers;
-                    }
-            };
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                //headers.put("Content-Type", "application/json");
+                headers.put("Authorization", authToken);
+                return headers;
+            }
+        };
 
         try {
             jsonObjectRequest.getHeaders();
