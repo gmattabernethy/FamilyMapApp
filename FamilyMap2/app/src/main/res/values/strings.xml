@@ -1,7 +1,5 @@
 <resources>
-    <string name="app_name">Family Map</string>
-    <string name="person_activity">Family Map: Person Details</string>
-    <string name="settings_activity">Family Map: Settings</string>
+    <string name="app_name">Ethnicity Test</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="action_settings">Settings</string>

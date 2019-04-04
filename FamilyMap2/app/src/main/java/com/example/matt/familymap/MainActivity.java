@@ -3,6 +3,7 @@ package com.example.matt.familymap;
 import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
@@ -19,9 +20,9 @@ import com.joanzapata.iconify.fonts.FontAwesomeModule;
 
 
 public class MainActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
-    private LoginFragment loginFragment;
+    private ScanFragment scanFragment;
     private MapFragment mapFragment;
-    private Menu menu;
+    private InfoFragment infoFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,9 +30,19 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
         setContentView(R.layout.activity_main);
         Iconify.with(new FontAwesomeModule());
 
-        loginFragment = new LoginFragment();
+        scanFragment = new ScanFragment();
         mapFragment = new MapFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, loginFragment).commit();
+        infoFragment = new InfoFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, scanFragment).commit();
+    }
+
+    public void openList(){
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+
+        transaction.replace(R.id.fragment_container, infoFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     public void openMap(){
@@ -41,32 +52,6 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
         transaction.replace(R.id.fragment_container, mapFragment);
         transaction.addToBackStack(null);
         transaction.commit();
-
-        for(int i = 0; i < 3; i++){
-            menu.getItem(i).setVisible(true);
-        }
-
-    }
-
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
-
-        this.menu = menu;
-        return true;
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     @Override
